@@ -61,7 +61,7 @@ public class UsersRestController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable("id") int id, @RequestBody User user) {
         Optional<User> userUpdated = usersService.updateUser(id, user);
         return userUpdated
                 .map(ResponseEntity::ok)

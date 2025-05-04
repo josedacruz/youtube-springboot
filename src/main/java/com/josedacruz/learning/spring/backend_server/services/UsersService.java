@@ -2,7 +2,9 @@ package com.josedacruz.learning.spring.backend_server.services;
 
 import com.josedacruz.learning.spring.backend_server.repositories.UsersRepository;
 import com.josedacruz.learning.spring.backend_server.domain.User;
+import com.josedacruz.learning.spring.backend_server.services.message.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,10 +15,18 @@ import java.util.Optional;
 public class UsersService {
 
     private final UsersRepository usersRepository;
+    private final MessageService emailService;
+    private final MessageService notificationService;
 
     @Autowired
-    public UsersService(UsersRepository usersRepository) {
+    public UsersService(
+            UsersRepository usersRepository,
+            @Qualifier("emailService") MessageService emailService,
+            @Qualifier("notificationService") MessageService notificationService) {
+
         this.usersRepository = usersRepository;
+        this.emailService = emailService;
+        this.notificationService = notificationService;
     }
 
     public Optional<User> getUserById(int id) {
@@ -36,7 +46,17 @@ public class UsersService {
     }
 
     public User createUser(User user) {
-        return usersRepository.save(user);
+
+        var newUser =  usersRepository.save(user);
+        if(newUser != null) {
+            emailService.sendMessage(
+                    "Hello " + user.getName() + ", welcome to the financial system. ",
+                    Map.of(
+                            "to", user.getEmail(),
+                            "subject", "Welcome to the financial system"
+                    ));
+        }
+        return newUser;
     }
 
     public Optional<User> updateUser(int id, User user) {
@@ -50,8 +70,14 @@ public class UsersService {
         existingUser.setName(user.getName());
         existingUser.setEmail(user.getEmail());
         existingUser.setDepartment(user.getDepartment());
-        return Optional.of(usersRepository.update(existingUser));
+        var updUser = Optional.of(usersRepository.update(existingUser));
 
+        notificationService.sendMessage(
+                "Hello " + user.getName() + ", your account has been updated. ",
+                Map.of(
+                        "to", user.getEmail()
+                ));
+        return updUser;
     }
 
     public void deleteUser(int id) {
