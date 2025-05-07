@@ -69,7 +69,7 @@ public class UsersRestController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<User> deleteUser(@PathVariable int id) {
+    public ResponseEntity<User> deleteUser(@PathVariable("id") int id) {
         try {
             usersService.deleteUser(id);
             return ResponseEntity.ok().build();

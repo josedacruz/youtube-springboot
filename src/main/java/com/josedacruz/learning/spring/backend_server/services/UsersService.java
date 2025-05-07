@@ -3,6 +3,8 @@ package com.josedacruz.learning.spring.backend_server.services;
 import com.josedacruz.learning.spring.backend_server.repositories.UsersRepository;
 import com.josedacruz.learning.spring.backend_server.domain.User;
 import com.josedacruz.learning.spring.backend_server.services.message.MessageService;
+import com.josedacruz.learning.spring.backend_server.telemetry.TelemetryCollector;
+import com.josedacruz.learning.spring.backend_server.telemetry.TelemetryUserAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -14,19 +16,24 @@ import java.util.Optional;
 @Service
 public class UsersService {
 
+
+
     private final UsersRepository usersRepository;
     private final MessageService emailService;
     private final MessageService notificationService;
+    private final TelemetryCollector telemetryCollector;
 
     @Autowired
     public UsersService(
             UsersRepository usersRepository,
             @Qualifier("emailService") MessageService emailService,
-            @Qualifier("notificationService") MessageService notificationService) {
+            @Qualifier("notificationService") MessageService notificationService,
+            TelemetryCollector telemetryCollector) {
 
         this.usersRepository = usersRepository;
         this.emailService = emailService;
         this.notificationService = notificationService;
+        this.telemetryCollector = telemetryCollector;
     }
 
     public Optional<User> getUserById(int id) {
@@ -49,6 +56,7 @@ public class UsersService {
 
         var newUser =  usersRepository.save(user);
         if(newUser != null) {
+            telemetryCollector.recordUserAction(TelemetryUserAction.CREATED);
             emailService.sendMessage(
                     "Hello " + user.getName() + ", welcome to the financial system. ",
                     Map.of(
@@ -72,6 +80,7 @@ public class UsersService {
         existingUser.setDepartment(user.getDepartment());
         var updUser = Optional.of(usersRepository.update(existingUser));
 
+        telemetryCollector.recordUserAction(TelemetryUserAction.UPDATED);
         notificationService.sendMessage(
                 "Hello " + user.getName() + ", your account has been updated. ",
                 Map.of(
@@ -84,6 +93,7 @@ public class UsersService {
         Optional<User> user = this.getUserById(id);
         if(user.isPresent()) {
             usersRepository.delete(user.get());
+            telemetryCollector.recordUserAction(TelemetryUserAction.DELETED);
         } else {
             throw new RuntimeException("User not found");
         }
