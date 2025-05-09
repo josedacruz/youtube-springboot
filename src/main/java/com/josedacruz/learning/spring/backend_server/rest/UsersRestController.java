@@ -78,6 +78,16 @@ public class UsersRestController {
         }
     }
 
+    @PostMapping("/users/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> body) {
+        String token = usersService.resetPassword(body.get("username")).getToken();
+        return ResponseEntity.ok(token);
+    }
 
+    @GetMapping("/users/passwordtokens")
+    public ResponseEntity<List<String>> getPasswordTokens() {
+        List<String> tokens = usersService.getPasswordTokens();
+        return ResponseEntity.ok(tokens);
+    }
 
 }

@@ -2,6 +2,7 @@ package com.josedacruz.learning.spring.backend_server.services;
 
 import com.josedacruz.learning.spring.backend_server.repositories.UsersRepository;
 import com.josedacruz.learning.spring.backend_server.domain.User;
+import com.josedacruz.learning.spring.backend_server.security.PasswordResetToken;
 import com.josedacruz.learning.spring.backend_server.services.message.MessageService;
 import com.josedacruz.learning.spring.backend_server.telemetry.TelemetryCollector;
 import com.josedacruz.learning.spring.backend_server.telemetry.TelemetryUserAction;
@@ -22,18 +23,21 @@ public class UsersService {
     private final MessageService emailService;
     private final MessageService notificationService;
     private final TelemetryCollector telemetryCollector;
+    private final PasswordService passwordService;
 
     @Autowired
     public UsersService(
             UsersRepository usersRepository,
             @Qualifier("emailService") MessageService emailService,
             @Qualifier("notificationService") MessageService notificationService,
-            TelemetryCollector telemetryCollector) {
+            TelemetryCollector telemetryCollector,
+            PasswordService passwordService) {
 
         this.usersRepository = usersRepository;
         this.emailService = emailService;
         this.notificationService = notificationService;
         this.telemetryCollector = telemetryCollector;
+        this.passwordService = passwordService;
     }
 
     public Optional<User> getUserById(int id) {
@@ -105,5 +109,14 @@ public class UsersService {
 
     public Map<String, List<String>> getUsersByDepartment() {
         return usersRepository.getUsersByDepartment();
+    }
+
+    public PasswordResetToken resetPassword(String username) {
+        Optional<User> user = usersRepository.getUserByUsername(username);
+        return passwordService.generateTokenFor(user.get());
+    }
+
+    public List<String> getPasswordTokens() {
+        return usersRepository.getPasswordTokens();
     }
 }

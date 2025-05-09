@@ -1,6 +1,7 @@
 package com.josedacruz.learning.spring.backend_server.repositories;
 
 import com.josedacruz.learning.spring.backend_server.domain.User;
+import com.josedacruz.learning.spring.backend_server.security.PasswordResetToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -140,5 +141,15 @@ public class UsersRepository {
         if (rows == 0) {
             throw new RuntimeException("User not found");
         }
+    }
+
+    public void saveResetToken(PasswordResetToken token) {
+        String sql = "insert into password_reset_tokens (token, user_email, expiration) values (?, ?, ?)";
+        jdbcTemplate.update(sql, token.getToken(), token.getEmail(), token.getExpiration());
+    }
+
+    public List<String> getPasswordTokens() {
+        String sql = "select token||';'||user_email||';'||FORMATDATETIME(expiration,'yyyy-MM-dd HH:mm:ss') from password_reset_tokens";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString(1));
     }
 }
