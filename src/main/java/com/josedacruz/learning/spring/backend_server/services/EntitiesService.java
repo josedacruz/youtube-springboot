@@ -5,6 +5,7 @@ import com.josedacruz.learning.spring.backend_server.repositories.EntitiesReposi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,5 +20,9 @@ public class EntitiesService {
 
     public Optional<Entity> getEntityById(int id) {
         return entitiesRepository.findById(id);
+    }
+
+    public List<Entity> getEntities() {
+        return entitiesRepository.findAll();
     }
 }

@@ -1,0 +1,10 @@
+### GET All
+GET http://localhost:9000/finances/entities HTTP/1.1
+Accept: application/json
+
+### GET by ID
+http://localhost:9000/finances/entities/1 HTTP/1.1
+Accept: application/json
+
+###
+

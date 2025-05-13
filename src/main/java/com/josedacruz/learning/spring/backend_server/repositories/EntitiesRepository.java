@@ -6,29 +6,30 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class EntitiesRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final RowMapper<Entity> entityRowMapper;
 
     @Autowired
-    public EntitiesRepository(JdbcTemplate jdbcTemplate) {
+    public EntitiesRepository(JdbcTemplate jdbcTemplate, RowMapper<Entity> entityMapper) {
         this.jdbcTemplate = jdbcTemplate;
+        this.entityRowMapper = entityMapper;
     }
 
 
     // This method should throw SQLException but due to spring boot it will throw BadSqlGrammarException
     public Optional<Entity> findById(int id)  {
         String sql = "SELECT id, name FROM entities WHERE id = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, entityMapper(), id));
+        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, entityRowMapper, id));
     }
 
-    private RowMapper<Entity> entityMapper() {
-        return (rs, rowNum) -> new Entity(
-                rs.getInt("id"),
-                rs.getString("name")
-        );
+    public List<Entity> findAll() {
+        String sql = "SELECT id, name FROM entities";
+        return jdbcTemplate.query(sql, entityRowMapper);
     }
 }

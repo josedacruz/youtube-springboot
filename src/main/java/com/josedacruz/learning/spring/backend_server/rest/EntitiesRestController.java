@@ -20,6 +20,12 @@ public class EntitiesRestController {
         this.entitiesService = entitiesService;
     }
 
+    @GetMapping("/entities")
+    public ResponseEntity<List<Entity>> getEntities() {
+        List<Entity> entities = entitiesService.getEntities();
+        return ResponseEntity.ok(entities);
+    }
+
     @GetMapping("/entities/{id}")
     public ResponseEntity<Entity> getEntityById(@PathVariable int id) {
         return entitiesService.getEntityById(id)
