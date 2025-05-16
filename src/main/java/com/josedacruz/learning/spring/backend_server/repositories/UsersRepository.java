@@ -2,6 +2,10 @@ package com.josedacruz.learning.spring.backend_server.repositories;
 
 import com.josedacruz.learning.spring.backend_server.domain.User;
 import com.josedacruz.learning.spring.backend_server.security.PasswordResetToken;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,6 +23,8 @@ import java.util.*;
 @Repository
 public class UsersRepository {
 
+    private static final Logger logger = LoggerFactory.getLogger(UsersRepository.class);
+
     private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -26,6 +32,20 @@ public class UsersRepository {
     public UsersRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    }
+
+    @PostConstruct
+    public void initializeAdditionalUsers() {
+        String sql = "insert into users (username,password,name,email,department) values (?,?,?,?,?)";
+        jdbcTemplate.update(sql, "guest", "guest", "Guest", "guest@guest.com", "none");
+        logger.info("Guest user created");
+    }
+
+    @PreDestroy
+    public void destroy() {
+        String sql = "delete from users where username = ?";
+        jdbcTemplate.update(sql, "guest");
+        logger.info("Guest user deleted");
     }
 
     public List<User> getUsers() {

@@ -1,6 +1,10 @@
 package com.josedacruz.learning.spring.backend_server.security;
 
 import com.josedacruz.learning.spring.backend_server.domain.User;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +14,18 @@ import java.util.UUID;
 @Component
 @Scope("prototype")
 public class PasswordResetToken {
+
+    private static final Logger logger = LoggerFactory.getLogger(PasswordResetToken.class);
+
+    @PostConstruct
+    public void init() {
+        logger.info("PasswordResetToken bean created");
+    }
+
+    @PreDestroy
+    public void destroy() {
+        logger.info("PasswordResetToken bean destroyed: never called :) !");
+    }
 
     private final String token;
     private final LocalDateTime expiration;
