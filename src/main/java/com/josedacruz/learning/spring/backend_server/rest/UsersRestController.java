@@ -3,6 +3,7 @@ package com.josedacruz.learning.spring.backend_server.rest;
 import com.josedacruz.learning.spring.backend_server.domain.User;
 import com.josedacruz.learning.spring.backend_server.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class UsersRestController {
     private UsersService usersService;
 
     @Autowired
-    public UsersRestController(UsersService usersService) {
+    public UsersRestController(@Lazy UsersService usersService) {
         this.usersService = usersService;
     }
 

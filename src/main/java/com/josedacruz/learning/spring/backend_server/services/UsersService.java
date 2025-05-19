@@ -6,8 +6,11 @@ import com.josedacruz.learning.spring.backend_server.security.PasswordResetToken
 import com.josedacruz.learning.spring.backend_server.services.message.MessageService;
 import com.josedacruz.learning.spring.backend_server.telemetry.TelemetryCollector;
 import com.josedacruz.learning.spring.backend_server.telemetry.TelemetryUserAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +18,10 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Lazy
 public class UsersService {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(UsersService.class);
 
     private final UsersRepository usersRepository;
     private final MessageService emailService;
@@ -38,6 +42,7 @@ public class UsersService {
         this.notificationService = notificationService;
         this.telemetryCollector = telemetryCollector;
         this.passwordService = passwordService;
+        logger.info("UsersService initialized");
     }
 
     public Optional<User> getUserById(int id) {
@@ -50,10 +55,6 @@ public class UsersService {
 
     public List<User> getUsers() {
         return usersRepository.getUsers();
-    }
-
-    public List<User> searchUsersFromDepartments(String department, String domain) {
-        return usersRepository.searchUsersFromDepartments(department, domain);
     }
 
     public User createUser(User user) {

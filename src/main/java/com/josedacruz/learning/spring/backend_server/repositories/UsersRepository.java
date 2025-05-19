@@ -7,6 +7,7 @@ import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,6 +22,7 @@ import java.sql.Statement;
 import java.util.*;
 
 @Repository
+@Lazy
 public class UsersRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(UsersRepository.class);
@@ -32,20 +34,7 @@ public class UsersRepository {
     public UsersRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-    }
-
-    @PostConstruct
-    public void initializeAdditionalUsers() {
-        String sql = "insert into users (username,password,name,email,department) values (?,?,?,?,?)";
-        jdbcTemplate.update(sql, "guest", "guest", "Guest", "guest@guest.com", "none");
-        logger.info("Guest user created");
-    }
-
-    @PreDestroy
-    public void destroy() {
-        String sql = "delete from users where username = ?";
-        jdbcTemplate.update(sql, "guest");
-        logger.info("Guest user deleted");
+        logger.info("UsersRepository initialized");
     }
 
     public List<User> getUsers() {

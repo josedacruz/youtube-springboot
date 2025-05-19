@@ -17,16 +17,6 @@ public class PasswordResetToken {
 
     private static final Logger logger = LoggerFactory.getLogger(PasswordResetToken.class);
 
-    @PostConstruct
-    public void init() {
-        logger.info("PasswordResetToken bean created");
-    }
-
-    @PreDestroy
-    public void destroy() {
-        logger.info("PasswordResetToken bean destroyed: never called :) !");
-    }
-
     private final String token;
     private final LocalDateTime expiration;
     private String email;
