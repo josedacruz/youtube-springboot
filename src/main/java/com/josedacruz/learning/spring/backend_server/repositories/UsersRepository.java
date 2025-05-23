@@ -7,6 +7,7 @@ import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,6 +25,9 @@ import java.util.*;
 @Repository
 @Lazy
 public class UsersRepository {
+
+    @Value("${tests.admin.enabled}")
+    private boolean testsAdminEnabled;
 
     private static final Logger logger = LoggerFactory.getLogger(UsersRepository.class);
 
@@ -160,5 +164,13 @@ public class UsersRepository {
     public List<String> getPasswordTokens() {
         String sql = "select token||';'||user_email||';'||FORMATDATETIME(expiration,'yyyy-MM-dd HH:mm:ss') from password_reset_tokens";
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString(1));
+    }
+
+    public void resetUsers() {
+        if(!testsAdminEnabled) {
+            throw new UnsupportedOperationException("Test admin operations are not enabled");
+        }
+        String sql = "delete from users";
+        jdbcTemplate.update(sql);
     }
 }

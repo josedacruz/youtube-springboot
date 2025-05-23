@@ -2,6 +2,7 @@ package com.josedacruz.learning.spring.backend_server.repositories;
 
 import com.josedacruz.learning.spring.backend_server.domain.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,9 @@ import java.util.Optional;
 
 @Repository
 public class EntitiesRepository {
+
+    @Value("${tests.admin.enabled}")
+    private boolean testsAdminEnabled;
 
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Entity> entityRowMapper;
@@ -31,5 +35,13 @@ public class EntitiesRepository {
     public List<Entity> findAll() {
         String sql = "SELECT id, name FROM entities";
         return jdbcTemplate.query(sql, entityRowMapper);
+    }
+
+    public void resetEntities() {
+        if(!testsAdminEnabled)  {
+            throw new UnsupportedOperationException("Test admin operations are not enabled");
+        }
+        String sql = "DELETE FROM entities";
+        jdbcTemplate.update(sql);
     }
 }

@@ -1,0 +1,5 @@
+DELETE http://localhost:9000/finances/tests/admin/users/reset HTTP/1.1
+
+###
+
+DELETE http://localhost:9000/finances/tests/admin/entities/reset HTTP/1.1
