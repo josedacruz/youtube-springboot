@@ -56,7 +56,9 @@ public class UsersRepository {
             return Optional.empty();
         }
 
-
+        // using a list - educational purpose (check the query vs queryForObject)
+        // List<User> users = jdbcTemplate.query(sql, userRowMapper(), id);
+        // return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
     }
 
     public Optional<User> getUserByUsername(String username) {
