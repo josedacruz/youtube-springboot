@@ -3,7 +3,6 @@ package com.josedacruz.learning.spring.backend_server.services;
 import com.josedacruz.learning.spring.backend_server.repositories.UsersRepository;
 import com.josedacruz.learning.spring.backend_server.domain.User;
 import com.josedacruz.learning.spring.backend_server.security.PasswordResetToken;
-import com.josedacruz.learning.spring.backend_server.services.message.MessageService;
 import com.josedacruz.learning.spring.backend_server.telemetry.TelemetryCollector;
 import com.josedacruz.learning.spring.backend_server.telemetry.TelemetryUserAction;
 import org.slf4j.Logger;
@@ -24,22 +23,16 @@ public class UsersService {
     private static final Logger logger = LoggerFactory.getLogger(UsersService.class);
 
     private final UsersRepository usersRepository;
-    private final MessageService emailService;
-    private final MessageService notificationService;
     private final TelemetryCollector telemetryCollector;
     private final PasswordService passwordService;
 
     @Autowired
     public UsersService(
             UsersRepository usersRepository,
-            @Qualifier("emailService") MessageService emailService,
-            @Qualifier("notificationService") MessageService notificationService,
             TelemetryCollector telemetryCollector,
             PasswordService passwordService) {
 
         this.usersRepository = usersRepository;
-        this.emailService = emailService;
-        this.notificationService = notificationService;
         this.telemetryCollector = telemetryCollector;
         this.passwordService = passwordService;
         logger.info("UsersService initialized");
@@ -62,12 +55,6 @@ public class UsersService {
         var newUser =  usersRepository.save(user);
         if(newUser != null) {
             telemetryCollector.recordUserAction(TelemetryUserAction.CREATED);
-            emailService.sendMessage(
-                    "Hello " + user.getName() + ", welcome to the financial system. ",
-                    Map.of(
-                            "to", user.getEmail(),
-                            "subject", "Welcome to the financial system"
-                    ));
         }
         return newUser;
     }
@@ -86,11 +73,6 @@ public class UsersService {
         var updUser = Optional.of(usersRepository.update(existingUser));
 
         telemetryCollector.recordUserAction(TelemetryUserAction.UPDATED);
-        notificationService.sendMessage(
-                "Hello " + user.getName() + ", your account has been updated. ",
-                Map.of(
-                        "to", user.getEmail()
-                ));
         return updUser;
     }
 

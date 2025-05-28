@@ -1,14 +1,20 @@
 package com.josedacruz.learning.spring.backend_server.domain;
 
-public class Entity {
+public class Category {
     private Integer id;
     private String name;
+    private String type; // "INCOME" or "EXPENSE"
 
-    public Entity(Integer id, String name) {
+    // Constructors
+    public Category() {}
+
+    public Category(Integer id, String name, String type) {
         this.id = id;
         this.name = name;
+        this.type = type;
     }
 
+    // Getters and setters
     public Integer getId() {
         return id;
     }
@@ -25,12 +31,12 @@ public class Entity {
         this.name = name;
     }
 
+    public String getType() {
+        return type;
+    }
 
-    @Override
-    public String toString() {
-        return "Entity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+    public void setType(String type) {
+        this.type = type;
     }
 }
+

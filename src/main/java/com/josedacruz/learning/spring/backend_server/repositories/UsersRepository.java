@@ -2,8 +2,6 @@ package com.josedacruz.learning.spring.backend_server.repositories;
 
 import com.josedacruz.learning.spring.backend_server.domain.User;
 import com.josedacruz.learning.spring.backend_server.security.PasswordResetToken;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +23,6 @@ import java.util.*;
 @Repository
 @Lazy
 public class UsersRepository {
-
-    @Value("${tests.admin.enabled}")
-    private boolean testsAdminEnabled;
 
     private static final Logger logger = LoggerFactory.getLogger(UsersRepository.class);
 
@@ -166,11 +161,4 @@ public class UsersRepository {
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString(1));
     }
 
-    public void resetUsers() {
-        if(!testsAdminEnabled) {
-            throw new UnsupportedOperationException("Test admin operations are not enabled");
-        }
-        String sql = "delete from users";
-        jdbcTemplate.update(sql);
-    }
 }

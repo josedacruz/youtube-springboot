@@ -1,0 +1,9 @@
+### GET All
+GET http://localhost:9000/finances/categories HTTP/1.1
+Accept: application/json
+
+###
+
+### GET All
+GET http://localhost:9000/finances/categories/1/transactions HTTP/1.1
+Accept: application/json
