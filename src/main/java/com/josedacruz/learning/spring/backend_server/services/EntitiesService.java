@@ -29,4 +29,24 @@ public class EntitiesService {
     public List<Entity> getEntities() {
         return entitiesRepository.findAll();
     }
+
+    public Entity createEntity(Entity entity) {
+        return entitiesRepository.save(entity);
+    }
+
+    public Optional<Entity> updateEntity(Entity entity) {
+        entitiesRepository.update(entity);
+        return entitiesRepository.findById(entity.getId());
+    }
+
+    public boolean deleteEntity(int id) {
+        Optional<Entity> entity = entitiesRepository.findById(id);
+        if (entity.isPresent()) {
+            entitiesRepository.deleteById(id);
+            return true;
+        } else {
+            logger.warn("Entity with id {} not found for deletion", id);
+            return false;
+        }
+    }
 }

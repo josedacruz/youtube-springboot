@@ -4,9 +4,7 @@ import com.josedacruz.learning.spring.backend_server.domain.Entity;
 import com.josedacruz.learning.spring.backend_server.services.EntitiesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,10 +25,33 @@ public class EntitiesRestController {
     }
 
     @GetMapping("/entities/{id}")
-    public ResponseEntity<Entity> getEntityById(@PathVariable int id) {
+    public ResponseEntity<Entity> getEntityById(@PathVariable("id") int id) {
         return entitiesService.getEntityById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/entities")
+    public ResponseEntity<Entity> createEntity(@RequestBody Entity entity) {
+        Entity createdEntity = entitiesService.createEntity(entity);
+        return ResponseEntity.status(201).body(createdEntity);
+    }
+
+    @PutMapping("/entities/{id}")
+    public ResponseEntity<Entity> updateEntity(@PathVariable("id") int id, @RequestBody Entity entity) {
+        entity.setId(id); // Ensure the ID is set for the update
+        return entitiesService.updateEntity(entity)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/entities/{id}")
+    public ResponseEntity<Void> deleteEntity(@PathVariable("id") int id) {
+        if (entitiesService.deleteEntity(id)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

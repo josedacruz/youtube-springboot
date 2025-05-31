@@ -2,34 +2,49 @@ package com.josedacruz.learning.spring.backend_server.repositories;
 
 import com.josedacruz.learning.spring.backend_server.domain.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public class EntitiesRepository {
+public class EntitiesRepository extends JdbcGenericDao<Entity, Integer> {
 
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Entity> entityRowMapper;
-
-    @Autowired
-    public EntitiesRepository(JdbcTemplate jdbcTemplate, RowMapper<Entity> entityMapper) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.entityRowMapper = entityMapper;
+    public EntitiesRepository(@Autowired JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
     }
 
-
-    // This method should throw SQLException but due to spring boot it will throw BadSqlGrammarException
-    public Optional<Entity> findById(int id)  {
-        String sql = "SELECT id, name FROM entities WHERE id = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, entityRowMapper, id));
+    @Override
+    protected RowMapper<Entity> getRowMapper() {
+        return new BeanPropertyRowMapper<>(Entity.class);
     }
 
-    public List<Entity> findAll() {
-        String sql = "SELECT id, name FROM entities";
-        return jdbcTemplate.query(sql, entityRowMapper);
+    @Override
+    protected String getTableName() {
+        return "entities";
+    }
+
+    @Override
+    protected String getIdColumn() {
+        return "id";
+    }
+
+    @Override
+    protected List<String> getColumnNames() {
+        return List.of("name");
+    }
+
+    @Override
+    protected List<Object> getColumnValues(Entity entity) {
+        return List.of(entity.getName());
+    }
+
+    // The ID is included as the last parameter for the update statement
+    // in an UPDATE statement is usually the last parameter
+    @Override
+    protected List<Object> getUpdateValues(Entity entity) {
+        return List.of(entity.getName(), entity.getId());
     }
 }
