@@ -112,10 +112,6 @@ public class UsersRepository {
 
         String sql = "insert into users (username,password,name,email,department) values (?,?,?,?,?)";
 
-        // without generated key
-        //int rows = jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getName(), user.getEmail(), user.getDepartment());
-
-        // with generated key
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
