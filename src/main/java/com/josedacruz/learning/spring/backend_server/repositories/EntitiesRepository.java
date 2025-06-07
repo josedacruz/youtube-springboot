@@ -1,6 +1,7 @@
 package com.josedacruz.learning.spring.backend_server.repositories;
 
 import com.josedacruz.learning.spring.backend_server.domain.Entity;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -47,4 +48,21 @@ public class EntitiesRepository extends JdbcGenericDao<Entity, Integer> {
     protected List<Object> getUpdateValues(Entity entity) {
         return List.of(entity.getName(), entity.getId());
     }
+
+    @PostConstruct
+    public void insertEntities() {
+        String sql = """
+            INSERT INTO entities (name) VALUES
+              ('Amazon'),
+              ('Walmart'),
+              ('Starbucks'),
+              ('Costco'),
+              ('Best Buy'),
+              ('Target'),
+              ('Apple Store')
+        """;
+
+        jdbcTemplate.execute(sql);
+    }
+
 }

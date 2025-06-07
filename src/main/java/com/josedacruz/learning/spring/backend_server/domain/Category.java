@@ -14,6 +14,12 @@ public class Category {
         this.type = type;
     }
 
+    public Category(String name, String type) {
+        this.id = null;
+        this.name = name;
+        this.type = type;
+    }
+
     // Getters and setters
     public Integer getId() {
         return id;
