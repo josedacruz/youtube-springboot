@@ -1,12 +1,18 @@
 package com.josedacruz.learning.spring.backend_server.services;
 
+import com.josedacruz.learning.spring.backend_server.domain.Category;
 import com.josedacruz.learning.spring.backend_server.domain.Entity;
 import com.josedacruz.learning.spring.backend_server.repositories.EntitiesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +36,76 @@ public class EntitiesService {
         return entitiesRepository.findAll();
     }
 
+    // The code below is for educational purposes only. (transactional)
+    public void insertEntityCategoryWithFail_WithoutTransaction() {
+        Entity entity = new Entity();
+        entity.setName("Test Entity0");
+        entitiesRepository.save(entity);
+
+        if(entity != null)    {
+            // Simulating an error that would cause the transaction to fail
+            throw new RuntimeException("Simulated failure after saving entity");
+        }
+
+        Category category = new Category();
+        category.setName("Test Category0");
+        category.setType("INCOME");
+        categoriesService.save(category);
+    }
+
+
+    @Autowired
+    private CategoryService categoriesService;
+
+    @Transactional
+    public void insertEntityCategoryWithFail_WithAnnotation() {
+        Entity entity = new Entity();
+        entity.setName("Test Entity1");
+        entitiesRepository.save(entity);
+
+        if(entity != null)    {
+            // Simulating an error that would cause the transaction to fail
+            throw new RuntimeException("Simulated failure after saving entity");
+        }
+
+        Category category = new Category();
+        category.setName("Test Category1");
+        category.setType("INCOME");
+        categoriesService.save(category);
+    }
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    public void insertEntityCategoryWithFail_WithoutAnnotation() {
+        DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
+
+        try {
+            Entity entity = new Entity();
+            entity.setName("Test Entity2");
+            entitiesRepository.save(entity);
+
+            if(entity != null)    {
+                // Simulating an error that would cause the transaction to fail
+                throw new RuntimeException("Simulated failure after saving entity");
+            }
+
+            Category category = new Category();
+            category.setName("Test Category2");
+            category.setType("INCOME");
+            categoriesService.save(category);
+            transactionManager.commit(transactionStatus);
+        } catch (Exception e) {
+            logger.error("Error occurred while inserting entity and category", e);
+            transactionManager.rollback(transactionStatus);
+            throw e; // rethrow the exception to indicate failure
+        }
+    }
+
+
+
+
     public Entity createEntity(Entity entity) {
         return entitiesRepository.save(entity);
     }
@@ -49,4 +125,6 @@ public class EntitiesService {
             return false;
         }
     }
+
+
 }

@@ -24,4 +24,9 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryWithTransactions getTransactionsByCategoryId(int id) {
         return categoryRepository.findTransactionsByCategoryId(id);
     }
+
+    @Override
+    public Category save(Category category) {
+        return categoryRepository.save(category);
+    }
 }

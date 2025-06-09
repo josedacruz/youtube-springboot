@@ -7,6 +7,8 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
@@ -78,80 +80,19 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         return map.get(categoryId);
     }
 
-    // For educational purposes, this method is used to insert initial categories into the database.
-    // the list should come from a configuration file or an external source in a real application.
-    @PostConstruct
-    public void insertCategories() {
+    @Override
+    public Category save(Category category) {
         String sql = "INSERT INTO categories (name, type) VALUES (?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            ps.setString(1, category.getName());
+            ps.setString(2, category.getType());
+            return ps;
+        }, keyHolder);
 
-        List<Category> categories = List.of(
-                new Category("Groceries", "EXPENSE"),
-                new Category("Utilities", "EXPENSE"),
-                new Category("Rent", "EXPENSE"),
-                new Category("Entertainment", "EXPENSE"),
-                new Category("Salary", "INCOME"),
-                new Category("Freelance", "INCOME"),
-                new Category("Investment", "INCOME")
-        );
-
-        try {
-            int[] result = jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-                @Override
-                public void setValues(PreparedStatement ps, int i) throws SQLException {
-                    Category category = categories.get(i);
-                    ps.setString(1, category.getName());
-                    ps.setString(2, category.getType());
-                }
-
-                @Override
-                public int getBatchSize() {
-                    return categories.size();
-                }
-            });
-
-            System.out.println("Batch insert completed. Rows affected per operation: " + Arrays.toString(result));
-        } catch (Exception e) {
-            System.err.println("Error during category batch insert: " + e.getMessage());
-            e.printStackTrace();
-        }
+        category.setId(keyHolder.getKey().intValue());
+        return category;
     }
 
-
-    @PostConstruct
-    public void insertCategoriesDifferentApproach() {
-        String sql = "INSERT INTO categories (name, type) VALUES (?, ?)";
-
-        List<Category> categories = List.of(
-                new Category("Method2-Groceries", "EXPENSE"),
-                new Category("Method2-Utilities", "EXPENSE"),
-                new Category("Method2-Rent", "EXPENSE"),
-                new Category("Method2-Entertainment", "EXPENSE"),
-                new Category("Method2-Salary", "INCOME"),
-                new Category("Method2-Freelance", "INCOME"),
-                new Category("Method2-Investment", "INCOME")
-        );
-
-        try {
-            int[][] results = jdbcTemplate.batchUpdate(
-                    sql,
-                    categories,
-                    3,
-                    new ParameterizedPreparedStatementSetter<Category>() {
-                        @Override
-                        public void setValues(PreparedStatement ps, Category category) throws SQLException {
-                            ps.setString(1, category.getName());
-                            ps.setString(2, category.getType());
-                        }
-                    }
-            );
-
-            System.out.println("Batch insert completed.");
-            for (int i = 0; i < results.length; i++) {
-                System.out.println("Batch " + i + " results: " + Arrays.toString(results[i]));
-            }
-        } catch (Exception e) {
-            System.err.println("Error during category batch insert: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 }

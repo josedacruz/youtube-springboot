@@ -9,4 +9,5 @@ public interface CategoryService {
 
     List<Category> getAllCategories();
     CategoryWithTransactions getTransactionsByCategoryId(int id);
+    Category save(Category category);
 }

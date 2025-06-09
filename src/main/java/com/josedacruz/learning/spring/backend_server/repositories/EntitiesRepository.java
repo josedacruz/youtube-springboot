@@ -48,21 +48,4 @@ public class EntitiesRepository extends JdbcGenericDao<Entity, Integer> {
     protected List<Object> getUpdateValues(Entity entity) {
         return List.of(entity.getName(), entity.getId());
     }
-
-    @PostConstruct
-    public void insertEntities() {
-        String sql = """
-            INSERT INTO entities (name) VALUES
-              ('Amazon'),
-              ('Walmart'),
-              ('Starbucks'),
-              ('Costco'),
-              ('Best Buy'),
-              ('Target'),
-              ('Apple Store')
-        """;
-
-        jdbcTemplate.execute(sql);
-    }
-
 }

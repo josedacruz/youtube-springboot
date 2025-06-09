@@ -18,6 +18,37 @@ public class EntitiesRestController {
         this.entitiesService = entitiesService;
     }
 
+    @PostMapping("/entities/transactional0")
+    public ResponseEntity<Void> insertEntityCategoryWithFail_WithoutTransaction() {
+        try {
+            entitiesService.insertEntityCategoryWithFail_WithoutTransaction();
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+
+    @PostMapping("/entities/transactional1")
+    public ResponseEntity<Void> insertEntityCategoryWithFail_Transactional() {
+        try {
+            entitiesService.insertEntityCategoryWithFail_WithAnnotation();
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @PostMapping("/entities/transactional2")
+    public ResponseEntity<Void> insertEntityCategoryWithFail_WithoutAnnotation() {
+        try {
+            entitiesService.insertEntityCategoryWithFail_WithoutAnnotation();
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
     @GetMapping("/entities")
     public ResponseEntity<List<Entity>> getEntities() {
         List<Entity> entities = entitiesService.getEntities();
