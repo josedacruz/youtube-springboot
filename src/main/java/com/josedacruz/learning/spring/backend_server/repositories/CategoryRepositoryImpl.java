@@ -4,6 +4,7 @@ import com.josedacruz.learning.spring.backend_server.domain.Category;
 import com.josedacruz.learning.spring.backend_server.domain.Transaction;
 import com.josedacruz.learning.spring.backend_server.dtos.CategoryWithTransactions;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
@@ -19,7 +20,7 @@ import java.util.*;
 public class CategoryRepositoryImpl implements CategoryRepository {
 
     private final JdbcTemplate jdbcTemplate;
-    public CategoryRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    public CategoryRepositoryImpl(@Qualifier("jdbcTemplateH2") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

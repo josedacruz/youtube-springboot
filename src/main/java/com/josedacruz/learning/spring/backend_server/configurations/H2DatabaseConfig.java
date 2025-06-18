@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 @Configuration
 public class H2DatabaseConfig {
 
-    @Bean
+    @Bean({"dataSource", "h2DataSource"})
     public DataSource dataSource() {
         return DataSourceBuilder.create()
                 .url("jdbc:h2:mem:usersdb")
@@ -21,7 +21,7 @@ public class H2DatabaseConfig {
                 .build();
     }
 
-    @Bean
+    @Bean({"jdbcTemplate", "jdbcTemplateH2"})
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
     }
