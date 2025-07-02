@@ -3,17 +3,20 @@ package com.josedacruz.learning.spring.backend_server.repositories;
 import com.josedacruz.learning.spring.backend_server.domain.Entity;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Types;
 import java.util.List;
 
 @Repository
 public class EntitiesRepository extends JdbcGenericDao<Entity, Integer> {
 
-    public EntitiesRepository(@Autowired JdbcTemplate jdbcTemplate) {
+    public EntitiesRepository(@Autowired @Qualifier("jdbcTemplateMySQL") JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
     }
 
@@ -47,5 +50,17 @@ public class EntitiesRepository extends JdbcGenericDao<Entity, Integer> {
     @Override
     protected List<Object> getUpdateValues(Entity entity) {
         return List.of(entity.getName(), entity.getId());
+    }
+
+    public Entity insertEntityAndReturnId(Entity entity) {
+        Integer res = jdbcTemplate.execute("{call insert_entity(?, ?)}", (CallableStatementCallback<Integer>) cs -> {
+            cs.setString(1, entity.getName());
+            cs.registerOutParameter(2, Types.INTEGER);
+            cs.execute();
+            return cs.getInt(2);
+        });
+
+        entity.setId(res);
+        return entity;
     }
 }
