@@ -40,6 +40,3 @@ CREATE TABLE IF NOT EXISTS transactions (
     FOREIGN KEY (entity_id) REFERENCES entities(id),
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
-
-
-

@@ -1,6 +1,7 @@
 package com.josedacruz.learning.spring.backend_server.rest;
 
 import com.josedacruz.learning.spring.backend_server.domain.Entity;
+import com.josedacruz.learning.spring.backend_server.observability.RequestScopedTraceId;
 import com.josedacruz.learning.spring.backend_server.services.EntitiesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,13 @@ import java.util.List;
 public class EntitiesRestController {
 
     private final EntitiesService entitiesService;
+    private final RequestScopedTraceId requestScopedTraceId;
 
     @Autowired
-    public EntitiesRestController(EntitiesService entitiesService) {
+    public EntitiesRestController(EntitiesService entitiesService,
+                                  RequestScopedTraceId requestScopedTraceId) {
         this.entitiesService = entitiesService;
+        this.requestScopedTraceId = requestScopedTraceId;
     }
 
     @PostMapping("/entities/transactional0")
@@ -52,7 +56,10 @@ public class EntitiesRestController {
     @GetMapping("/entities")
     public ResponseEntity<List<Entity>> getEntities() {
         List<Entity> entities = entitiesService.getEntities();
-        return ResponseEntity.ok(entities);
+        return ResponseEntity
+                .ok()
+                .header("X-Trace-Id", requestScopedTraceId.getTraceId())
+                .body(entities);
     }
 
     @GetMapping("/entities/{id}")

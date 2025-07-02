@@ -2,6 +2,7 @@ package com.josedacruz.learning.spring.backend_server.services;
 
 import com.josedacruz.learning.spring.backend_server.domain.Category;
 import com.josedacruz.learning.spring.backend_server.domain.Entity;
+import com.josedacruz.learning.spring.backend_server.observability.RequestScopedTraceId;
 import com.josedacruz.learning.spring.backend_server.repositories.EntitiesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +23,13 @@ public class EntitiesService {
     private static final Logger logger = LoggerFactory.getLogger(EntitiesService.class);
 
     private final EntitiesRepository entitiesRepository;
+    private final RequestScopedTraceId requestScopedTraceId;
 
     @Autowired
-    public EntitiesService(EntitiesRepository entitiesRepository) {
+    public EntitiesService(EntitiesRepository entitiesRepository,
+                           RequestScopedTraceId requestScopedTraceId) {
         this.entitiesRepository = entitiesRepository;
+        this.requestScopedTraceId = requestScopedTraceId;
     }
 
     public Optional<Entity> getEntityById(int id) {
@@ -33,6 +37,7 @@ public class EntitiesService {
     }
 
     public List<Entity> getEntities() {
+        System.out.println("RequestScopedTraceId: " + requestScopedTraceId.getTraceId());
         return entitiesRepository.findAll();
     }
 

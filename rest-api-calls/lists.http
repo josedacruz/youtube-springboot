@@ -1,0 +1,9 @@
+### get items from list
+GET http://localhost:9000/finances/lists
+Accept: application/json
+
+### add item
+POST http://localhost:9000/finances/lists
+Accept: application/json
+
+item1
