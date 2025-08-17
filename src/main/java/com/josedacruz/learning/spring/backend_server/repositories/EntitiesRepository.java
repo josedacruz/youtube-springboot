@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public class EntitiesRepository extends JdbcGenericDao<Entity, Integer> {
 
-    public EntitiesRepository(@Autowired @Qualifier("jdbcTemplateMySQL") JdbcTemplate jdbcTemplate) {
+    public EntitiesRepository(@Autowired @Qualifier("jdbcTemplate") JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
     }
 

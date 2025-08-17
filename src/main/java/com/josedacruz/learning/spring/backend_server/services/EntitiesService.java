@@ -109,8 +109,7 @@ public class EntitiesService {
     }
 
     public Entity createEntity(Entity entity) {
-        return entitiesRepository.insertEntityAndReturnId(entity);
-        // return entitiesRepository.save(entity);
+        return entitiesRepository.save(entity);
     }
 
     public Optional<Entity> updateEntity(Entity entity) {

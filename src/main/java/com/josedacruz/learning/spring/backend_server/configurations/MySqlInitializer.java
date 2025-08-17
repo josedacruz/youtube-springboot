@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class MySqlInitializer {
 
     @Autowired

@@ -10,7 +10,7 @@ import org.testcontainers.containers.MySQLContainer;
 
 import javax.sql.DataSource;
 
-@Configuration
+//@Configuration
 public class TestContainerMySQLConfig {
 
     static final MySQLContainer<?> mysql;
