@@ -37,7 +37,6 @@ public class EntitiesService {
     }
 
     public List<Entity> getEntities() {
-        System.out.println("RequestScopedTraceId: " + requestScopedTraceId.getTraceId());
         return entitiesRepository.findAll();
     }
 

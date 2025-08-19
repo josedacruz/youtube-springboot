@@ -9,5 +9,6 @@ public class CommandLineRunnerHelper implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("CommandLineRunnerHelper.run");
+        System.out.println("args: " + args[0]);
     }
 }
